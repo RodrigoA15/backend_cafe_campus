@@ -28,8 +28,10 @@ export class CategoriesService {
   async findAll() {
     const data = await this.categoryModel.find().exec();
     if (isEmpty(data)) {
-      throw new NotFoundException('Not accidents found');
+      throw new NotFoundException('Not categories found');
     }
+
+    return data;
   }
 
   findOne(id: number) {
