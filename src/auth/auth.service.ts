@@ -10,10 +10,6 @@ import { User, UserDocument } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { isEmpty } from 'src/utils/validation.utils';
 
-export interface AuthTokenResponse {
-  access_token: string;
-}
-
 @Injectable()
 export class AuthService {
   private readonly USER_NOT_FOUND = 'Usuario no encontrado';
@@ -24,13 +20,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, password: string): Promise<AuthTokenResponse> {
+  async signIn(username: string, password: string): Promise<string> {
     const user = await this.validateUser(username, password);
     const payload = { username: user.username, sub: user._id };
 
-    return {
-      access_token: await this.getJwtToken(payload),
-    };
+    return this.getJwtToken(payload);
   }
 
   private async validateUser(
@@ -56,5 +50,18 @@ export class AuthService {
 
   private async getJwtToken(payload: object): Promise<string> {
     return this.jwtService.signAsync(payload);
+  }
+
+  async verifyToken(token: any) {
+    if (isEmpty(token)) {
+      throw new UnauthorizedException('Token no proporcionado');
+    }
+
+    try {
+      const payload = await this.jwtService.verifyAsync(token);
+      return payload;
+    } catch (e) {
+      throw new UnauthorizedException('Token inválido');
+    }
   }
 }
