@@ -27,12 +27,7 @@ export class AuthController {
     );
 
     // 6. Establecer la cookie en la respuesta
-    response.cookie('access_token', access_token, {
-      httpOnly: true, // La cookie no es accesible desde el JavaScript del cliente
-      secure: process.env.NODE_ENV === 'production', // Enviar solo por HTTPS en producción
-      sameSite: 'strict', // Protección contra ataques CSRF
-      // Opcional: maxAge: 1000 * 60 * 60 * 24, // 1 día de expiración
-    });
+    response.cookie('access_token', access_token);
     // 7. Enviar una respuesta JSON (gracias a passthrough: true)
     return { message: 'Login exitoso' };
   }
